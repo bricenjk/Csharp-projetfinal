@@ -33,22 +33,48 @@ public class HeroController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult Updade(Hero heroRequest)
+    public async Task<ActionResult<Hero>> CreateHero(string name, string firstname, string lastname, Hero hero)
     {
-        var hero = heroes.Find(hero => heroRequest.Id == hero.Id); // lambda expression
-        return Ok();
+        hero.Id = heroes.Count + 1;
+        hero.Name = name;
+        hero.FirstName = firstname;
+        hero.LastName = lastname;
+        _context.Heroes.Add(hero);
+        await _context.SaveChangesAsync();
+        return Ok(hero);
     }
+    
 
-    [HttpPost]
-
-    public async Task<ActionResult<List<Hero>>> CreateHero([FromBody] Hero hero)
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Hero>> UpdateHero(int id, string name, string firstname, string lastname)
     {
-        heroes.Add(hero);
+        var hero = await _context.Heroes.FindAsync(id);
+        if (hero == null)
+        {
+            return NotFound();
+        }
 
-        return Ok(heroes);
+        hero.Name = name;
+        hero.FirstName = firstname;
+        hero.LastName = lastname;
+
+        _context.Heroes.Update(hero);
+        await _context.SaveChangesAsync();
+        return Ok(hero);
     }
+    
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<Hero>> DeleteHero(int id)
+    {
+        var hero = await _context.Heroes.FindAsync(id);
+        if (hero == null)
+        {
+            return NotFound();
+        }
+        _context.Heroes.Remove(hero);
+        await _context.SaveChangesAsync();
+        return Ok(hero);
+    }
+    
 }
-
-
-
-
