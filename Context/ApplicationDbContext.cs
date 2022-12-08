@@ -1,4 +1,5 @@
 
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 public class ApplicationDbContext : DbContext
